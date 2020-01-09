@@ -1,8 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
-const taskRouter = require("./routes/tasks");
-const dashboard = require("./routes/category");
 const userRouter = require("./routes/users");
 const dotenv = require("dotenv").config();
 const uploadRouter = require("./routes/upload");
@@ -16,9 +14,8 @@ app.options("*", cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname + "/public"));
-const url = "mongodb://localhost:27017/twitterApiOm";
 mongoose
-  .connect(url, {
+  .connect(process.env.URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -33,9 +30,6 @@ mongoose
 
 app.use("/users", userRouter);
 app.use("/upload", uploadRouter);
-app.use(auth.verifyUser);
-app.use("/dashboard", dashboard);
-app.use("/tasks", taskRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -43,6 +37,6 @@ app.use((err, req, res, next) => {
   res.json({ status: err.message });
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`App is running at localhost:${process.env.PORT} or 3000`);
+app.listen(process.env.PORT, () => {
+  console.log(`App is running at localhost:${process.env.PORT}`);
 });
